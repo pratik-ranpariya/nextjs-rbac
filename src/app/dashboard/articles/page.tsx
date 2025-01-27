@@ -11,7 +11,7 @@ interface ArticleData {
     status: "Submitted" | "Approved" | "Rejected";
   }
 
-const page = () => {
+const ArticlePage = () => {
     const [articles, setArticles] = useState<ArticleData[]>([]);
   const [error, setError] = useState("");
 
@@ -28,19 +28,22 @@ const page = () => {
           throw new Error("Failed to fetch articles");
         }
 
-        console.log(data)
-        const articles = data.data.data.map((item: any) => ({
+        
+        const articles = data.data.data.map((item:ArticleData ) => ({
           id: item.id,
           title: item.title,
           description: item.description,
           slug: item.slug,
           status: item.status, // Assuming status exists in the Strapi schema
         }));
-        console.log("ARTICLE", articles)
+      
 
         setArticles(articles);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (error) {
+        // Handle AxiosError or generic Error
+        console.log(error)
+        setError(error as string)
+        
       }
     };
 
@@ -57,4 +60,4 @@ const page = () => {
   )
 }
 
-export default page
+export default ArticlePage
