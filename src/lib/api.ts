@@ -27,6 +27,7 @@ export const loginUser = async (identifier: string, password: string): Promise<L
 };
 
 
+//for logout user
 export const logoutUser =  () => {
   console.log("Here ")
   try {
