@@ -39,17 +39,18 @@ const ArticlePage = () => {
           throw new Error("Failed to fetch articles");
         }
 
-        const articles = data.data.data.map((item: ArticleData) => ({
+        console.log("data", data?.data?.data);
+
+        const articles = data?.data?.data?.map((item: ArticleData) => ({
           id: item.id,
           title: item.title,
           description: item.description,
           slug: item.slug,
-          status: item.status, // Assuming status exists in the Strapi schema
+          status: item.status,
         }));
 
         setArticles(articles);
       } catch (error) {
-        // Handle AxiosError or generic Error
         console.log(error);
         setError(error as string);
       }
