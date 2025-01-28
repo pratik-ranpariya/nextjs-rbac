@@ -1,5 +1,6 @@
 "use client"
 import Article from '@/components/Article/Article';
+import { STRAPI_URL } from '@/lib/api';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
@@ -18,7 +19,7 @@ const ArticlePage = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const data = await axios.get("http://localhost:1337/api/articles", {
+        const data = await axios.get(`${STRAPI_URL}/api/articles`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Auth token
           },

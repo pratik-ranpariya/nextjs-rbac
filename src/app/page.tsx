@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from 'next/navigation'
+import { STRAPI_URL } from "@/lib/api";
 
 const Home = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Home = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:1337/api/auth/local", {
+    const res = await fetch(`${STRAPI_URL}/api/auth/local`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
