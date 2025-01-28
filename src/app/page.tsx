@@ -1,35 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react";
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { STRAPI_URL } from "@/lib/api";
+import axios from "axios";
 
 const Home = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
+
+  useEffect(() => {
+    // Check if token exists and redirect if true
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/dashboard/articles");
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch(`${STRAPI_URL}/api/auth/local`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ identifier: email, password }),
-    });
+    try {
+      const response = await axios.post(
+        `${STRAPI_URL}/api/auth/local`,
+        {
+          identifier: email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const data = await res.json();
-
-    console.log("Res",res)
-
-    if (res) {
-      localStorage.setItem("token", data.jwt);
-      router.push("/dashboard/articles");
-    } else {
-      setError(data.error?.message || "Login failed. Please try again.");
+      if (response.data.jwt) {
+        localStorage.setItem("token", response.data.jwt);
+        router.push("/dashboard/articles");
+      }
+    } catch {
+      setError("Login failed. Please try again.");
     }
   };
 

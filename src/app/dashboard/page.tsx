@@ -1,10 +1,18 @@
-import React from "react";
+"use client";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 const Dashboard = () => {
-  return (
- <></>
+  const router = useRouter();
 
-  );
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+    }
+  }, []);
+
+  return <></>;
 };
 
 export default Dashboard;
