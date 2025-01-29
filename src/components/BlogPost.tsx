@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface BlogPostProps {
   post: {
@@ -14,7 +15,7 @@ interface BlogPostProps {
 
 export default function BlogPost({ post }: BlogPostProps) {
   return (
-    <article className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]">
+    <Link className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"  href={'blog/B-010KL'}>
       <div className="relative w-full h-48">
         <Image
           src={post.authorImage || ''}
@@ -48,6 +49,6 @@ export default function BlogPost({ post }: BlogPostProps) {
           </time>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }
