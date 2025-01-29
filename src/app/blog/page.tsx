@@ -59,15 +59,6 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
-const categories = [
-  'All',
-  'Technology',
-  'Marketing',
-  'Finance',
-  'Leadership',
-  'Startups',
-  'Innovation'
-];
 
 export default function BlogPage() {
   return (
