@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import { ArticleData, generateSlug } from "@/types/index"; // Fixed import path
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Banner from "@/components/Banner";
+import StockTicker from "@/components/StockTicker";
 
 export default function BlogPage() {
   const [articles, setArticles] = useState<ArticleData[]>([]);
@@ -19,8 +21,9 @@ export default function BlogPage() {
 
   return (
     <main>
-      <Navbar />
       <div className="min-h-screen bg-gray-50">
+
+      <Banner />
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold mb-8">Latest Articles</h1>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

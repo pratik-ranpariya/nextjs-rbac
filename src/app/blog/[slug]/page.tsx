@@ -18,7 +18,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <main>
-      <Navbar />
       <div className="min-h-screen bg-gray-50">
         <article className="max-w-4xl mx-auto py-12 px-4 sm:px-6">
           <h1 className="text-4xl font-bold mb-4">{article.data.title}</h1>
