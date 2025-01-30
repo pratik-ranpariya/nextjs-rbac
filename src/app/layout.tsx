@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={`${playfair.variable} ${sourceSans.variable}`}>
         <SubscribeBanner />
         <NewsFlash />
-        <Navbar />
+          <Navbar />
         {children}
       </body>
     </html>
