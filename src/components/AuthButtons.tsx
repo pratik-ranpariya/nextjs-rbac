@@ -1,31 +1,45 @@
 'use client';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import LoginPopup from './LoginPopup';
 
 export default function AuthButtons() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
-  }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
 
   if (isAuthenticated) return null;
 
   return (
-    <div className="flex items-center space-x-4">
-      <Link 
-        href="/login" 
-        className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200"
-      >
-        Login
-      </Link>
-      <Link 
-        href="/signup" 
-        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors duration-200"
-      >
-        Sign Up
-      </Link>
-    </div>
+    <>
+      <div className="bg-red-600 px-4 py-2">
+        <div className="flex items-center space-x-4">
+          <button 
+            onClick={() => setIsLoginOpen(true)}
+            className="text-sm text-white hover:text-white/90 transition-colors"
+          >
+            Login
+          </button>
+          <span className="text-white/50">|</span>
+          <button 
+            onClick={() => setIsSignupOpen(true)}
+            className="text-sm text-white hover:text-white/90 transition-colors"
+          >
+            Sign Up
+          </button>
+        </div>
+      </div>
+
+      <LoginPopup 
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        mode="login"
+      />
+
+      <LoginPopup 
+        isOpen={isSignupOpen}
+        onClose={() => setIsSignupOpen(false)}
+        mode="signup"
+      />
+    </>
   );
 } 

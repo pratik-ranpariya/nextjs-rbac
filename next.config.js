@@ -7,6 +7,12 @@ const nextConfig = {
         hostname: "picsum.photos",
       },
     ],
+    domains: [
+      'picsum.photos',  // For random article images
+      'i.pravatar.cc',  // For avatar images
+      'dynamicbusiness.com', // If you're using images from this domain
+      'backend.dynamicbusiness.com'
+    ],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
