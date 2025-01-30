@@ -10,7 +10,7 @@ const Dashboard = () => {
     if (!token) {
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
   return <></>;
 };
