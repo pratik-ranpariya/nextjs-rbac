@@ -5,12 +5,12 @@ import Link from "next/link";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 export async function generateStaticParams() {
-  return [0, 2, 1].map((article) => ({
+  return [0, 2, 1].map(() => ({
     slug: "article.slug",
   }));
 }
 
-const articles = Array(5).fill({
+const articles = Array(10).fill({
   title: "Why insurers should be all about the data",
   description:
     "Auto insurance is evolving with digital tools like mobile apps, AI, an...",
@@ -19,7 +19,7 @@ const articles = Array(5).fill({
   link: "/brand-account/why-insurers-should-be-all-about-the-data.html",
 });
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
+export default function BlogPost() {
   const article = {
     slug: "first-article",
     title: "SMEs push for tax and red tape reform in federal budget 2025",

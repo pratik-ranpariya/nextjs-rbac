@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { STRAPI_URL } from "@/lib/api";
-import axios from "axios";
+// import { STRAPI_URL } from "@/lib/api";
+// import axios from "axios";
 import BlogPage from "./blog/page";
 
 const Home = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [error, setError] = useState("");
 
   useEffect(() => {
     // Check if token exists and redirect if true
@@ -20,35 +20,35 @@ const Home = () => {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        `${STRAPI_URL}/api/auth/local`,
-        {
-          identifier: email,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  //   try {
+  //     const response = await axios.post(
+  //       `${STRAPI_URL}/api/auth/local`,
+  //       {
+  //         identifier: email,
+  //         password,
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      if (response.data.jwt) {
-        localStorage.setItem("token", response.data.jwt);
-        router.push("/dashboard/articles");
-      }
-    } catch {
-      setError("Login failed. Please try again.");
-    }
-  };
+  //     if (response.data.jwt) {
+  //       localStorage.setItem("token", response.data.jwt);
+  //       router.push("/dashboard/articles");
+  //     }
+  //   } catch {
+  //     setError("Login failed. Please try again.");
+  //   }
+  // };
 
   return (
     <>
-    <BlogPage />
+      <BlogPage />
     </>
     // <div className="flex items-center justify-center min-h-screen bg-gray-100">
     //   <div className="w-full max-w-sm p-6 bg-white shadow-md rounded-lg">
