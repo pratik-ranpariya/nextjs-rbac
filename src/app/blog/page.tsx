@@ -3,11 +3,13 @@ import Link from "next/link";
 import { getAllArticles } from "@/utils/BlogData";
 import Navbar from "@/components/Navbar";
 import { ArticleData, generateSlug } from "@/types/index";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import Banner from "@/components/Banner";
 import StockTicker from "@/components/StockTicker";
 import Advertisement from "@/components/Advertisement";
+import { useSearchParams } from 'next/navigation';
+import ProgressBar from '@/components/ProgressBar';
 
 function getInitials(name: string) {
   return name
@@ -22,16 +24,63 @@ function truncateText(text: string, maxLength: number) {
   return text.substr(0, maxLength).trim() + '...';
 }
 
-export default function BlogPage() {
+// Separate the content that uses useSearchParams
+function BlogContent() {
   const [articles, setArticles] = useState<ArticleData[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<ArticleData[]>([]);
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category');
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const fetchedArticles = await getAllArticles();
-      setArticles(fetchedArticles);
+      try {
+        const fetchedArticles = await getAllArticles();
+        setArticles(fetchedArticles);
+        
+        if (category) {
+          const filtered = fetchedArticles.filter(article => 
+            article.data.title.toLowerCase().includes(category.toLowerCase()) ||
+            (article.data.content && article.data.content.toLowerCase().includes(category.toLowerCase()))
+          );
+          setFilteredArticles(filtered);
+        } else {
+          setFilteredArticles(fetchedArticles);
+        }
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+        setArticles([]);
+        setFilteredArticles([]);
+      }
     };
+
     fetchArticles();
-  }, []);
+  }, [category]);
+
+  const featuredArticles = filteredArticles.slice(0, 5);
+
+  // If no articles are found for the category
+  if (category && filteredArticles.length === 0) {
+    return (
+      <main className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4 capitalize">
+              No articles found in {category}
+            </h1>
+            <p className="text-gray-600 mb-8">
+              Try exploring other categories or check back later for new content.
+            </p>
+            <Link 
+              href="/blog"
+              className="inline-block bg-red-600 text-white px-6 py-3 hover:bg-red-700 transition-colors"
+            >
+              View All Articles
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   const latestStories = [
     {
@@ -80,10 +129,10 @@ export default function BlogPage() {
 
   return (
     <main>
+      <ProgressBar />
       <div className="min-h-screen bg-gray-50">
-        <Banner />
-        
-        {/* Featured Article Section */}
+        {/* Only show Banner when not viewing a category */}
+        {!category && <Banner />}
         <section className="border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="flex flex-col lg:flex-row gap-8">
@@ -157,74 +206,131 @@ export default function BlogPage() {
               </div>
             </div>
           </div>
-        </section>
+        </section>}
+        {/* Category Header */}
+        {category && (
+          <div className="bg-white border-b">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4 capitalize">
+                {category} News
+              </h1>
+              <p className="text-xl text-gray-600">
+                Latest updates and insights from the {category} world
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Featured Articles Slider */}
+        {featuredArticles.length > 0 && (
+          <div className="relative overflow-hidden bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+              <h2 className="text-2xl font-bold mb-8">
+                {category ? `Featured in ${category}` : 'Featured Articles'}
+              </h2>
+              <div className="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide">
+                {featuredArticles.map((article, index) => (
+                  <div key={index} className="flex-none w-96">
+                    <Link href={`/blog/${generateSlug(article.data.title)}`}>
+                      <div className="group relative h-64 mb-4">
+                        <Image
+                          src={`https://picsum.photos/800/400?random=${index}`}
+                          alt={article.data.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                          <div className="absolute bottom-4 left-4 right-4 text-white">
+                            <div className="mb-2">
+                              <span className="bg-red-600/85 px-2 py-1 text-xs font-medium">
+                                {category || 'FEATURED'}
+                              </span>
+                            </div>
+                            <h3 className="text-lg font-bold group-hover:text-red-400 transition-colors">
+                              {article.data.title}
+                            </h3>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         <Advertisement type="leaderboard" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" />
 
-        {/* Existing Articles Grid Section */}
+        {/* Articles Grid */}
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-8">More Articles</h2>
+          <h2 className="text-2xl font-bold mb-8">
+            {category ? `More ${category} Articles` : 'Latest Articles'}
+          </h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article, index) => {
-              const imageUrl = `https://picsum.photos/800/400?random=${index}`;
-
-              console.log(article);
-              
-              return (
-                <Link
-                  key={index}
-                  href={`/blog/${generateSlug(article.data.title)}`}
-                  className="group bg-white hover:bg-red-50/50 hover:shadow-xl transition-all duration-300 relative after:absolute after:inset-0 after:z-0 after:bg-gradient-to-b after:from-transparent after:to-red-50/20 after:opacity-0 hover:after:opacity-100 after:transition-opacity"
-                >
-                  <div className="relative z-10">
-                    {/* Category Badge */}
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="bg-red-600/85 backdrop-blur-sm text-white px-3 py-1 text-sm font-medium transition-colors group-hover:bg-red-600">
-                        Business
-                      </span>
-                    </div>
-                    
-                    {/* Image Container */}
-                    <div className="relative h-64 overflow-hidden">
-                      <Image
-                        src={imageUrl}
-                        alt={article.data.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
+            {filteredArticles.map((article, index) => (
+              <Link
+                key={index}
+                href={`/blog/${generateSlug(article.data.title)}`}
+                className="group bg-white hover:bg-red-50/50 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="relative">
+                  <div className="absolute top-4 left-4 z-10">
+                    <span className="bg-red-600/85 text-white px-3 py-1 text-sm font-medium">
+                      {category || 'Featured'}
+                    </span>
                   </div>
+                  
+                  <div className="relative h-64 overflow-hidden">
+                    <Image
+                      src={`https://picsum.photos/800/400?random=${index}`}
+                      alt={article.data.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                </div>
 
-                  {/* Content Container */}
-                  <div className="p-6 relative z-10">
-                    <h2 className="text-xl font-bold mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
-                      {article.data.title}
-                    </h2>
-                    {/* Article Preview */}
-                    <p className="text-gray-600 mb-4 line-clamp-2 group-hover:text-gray-700 transition-colors ">
-                      {(article.data.paragraphs[0]?.text || 'No content available')}
-                    </p>
-                    
-                    {/* Author and Date */}
-                    <div className="flex items-center justify-between text-sm text-gray-600">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-medium group-hover:bg-red-700 transition-colors">
-                          {getInitials(article.data.author)}
-                        </div>
-                        <span className="group-hover:text-gray-700 transition-colors">{article.data.author}</span>
+                <div className="p-6">
+                  <h2 className="text-xl font-bold mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
+                    {article.data.title}
+                  </h2>
+                  <p className="text-gray-600 mb-4 line-clamp-2">
+                    {article.data.content}
+                  </p>
+                  
+                  <div className="flex items-center justify-between text-sm text-gray-600">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 bg-red-600 text-white flex items-center justify-center font-medium">
+                        {article.data.author?.split(' ').map(n => n[0]).join('') || 'DB'}
                       </div>
-                      <time className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors">
-                        {article.data.publicationDate}
-                      </time>
+                      <span>{article.data.author}</span>
                     </div>
+                    <time className="text-gray-500">
+                      {article.data.publicationDate}
+                    </time>
                   </div>
-                </Link>
-              );
-            })}
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
 
         <Advertisement type="banner" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" />
+      </div>
+    </main>
+  );
+}
+
+// Main component with Suspense
+export default function BlogPage() {
+  return (
+    <main>
+      <ProgressBar />
+      <div className="min-h-screen bg-gray-50">
+        <Suspense fallback={<div>Loading...</div>}>
+          <BlogContent />
+        </Suspense>
       </div>
     </main>
   );

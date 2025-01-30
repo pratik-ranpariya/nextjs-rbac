@@ -14,6 +14,7 @@ import Logo from "@/Icon/Logo";
 import { usePathname } from "next/navigation";
 import Banner from "./Banner";
 import SearchPopup from "./SearchPopup";
+import CategoryDropdown from './CategoryDropdown';
 
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -37,11 +38,11 @@ export default function Navbar() {
   return (
     <>
       <div>
-        <div className="flex justify-center py-4 border-b">
-          <Link href="/">
-            <Logo />
-          </Link>
-        </div>
+      <div className="flex justify-center items-center py-4 border-b px-4 md:px-6 lg:px-8">
+        <Link href="/">
+          <Logo />
+        </Link>
+      </div>
       </div>
       <nav className="bg-white border-b border-gray-200 sticky top-0 w-full z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -78,26 +79,22 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              {[
-                { href: "/", text: "HOME" },
-                { href: "/blog", text: "READ" },
-                { href: "/write", text: "WRITE" },
-                { href: "/advertise", text: "ADVERTISE" },
-                { href: "/tools", text: "TOOLS" },
-                { href: "/learn", text: "LEARN" },
-              ].map((link) => (
-                <Link
-                  key={link.text}
-                  href={link.href}
-                  className={`text-sm transition-colors duration-200 ${
-                    isActive(link.href)
-                      ? "text-red-600 font-bold"
-                      : "text-gray-700 hover:text-red-600 font-semibold"
-                  }`}
-                >
-                  {link.text}
-                </Link>
-              ))}
+              <Link href="/" className={linkStyle("/")}>
+                HOME
+              </Link>
+              <CategoryDropdown />
+              <Link href="/write" className={linkStyle("/write")}>
+                WRITE
+              </Link>
+              <Link href="/advertise" className={linkStyle("/advertise")}>
+                ADVERTISE
+              </Link>
+              <Link href="/tools" className={linkStyle("/tools")}>
+                TOOLS
+              </Link>
+              <Link href="/learn" className={linkStyle("/learn")}>
+                LEARN
+              </Link>
             </div>
 
             <div className="flex items-center space-x-6">
