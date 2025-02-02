@@ -1,11 +1,14 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { FaTimes, FaArrowRight } from 'react-icons/fa';
+"use client";
+import { useState, useEffect } from "react";
+import { FaTimes, FaArrowRight } from "react-icons/fa";
 
-export default function ProgressBar() {
+interface ProgressBarProps {
+  value: number;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ value }) => {
   const [showBar, setShowBar] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     // Wait 10 seconds before showing the bar
@@ -13,27 +16,15 @@ export default function ProgressBar() {
       setShowBar(true);
     }, 100);
 
-    // Increment progress
-    const progressTimer = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressTimer);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, 50);
-
     return () => {
       clearTimeout(showTimer);
-      clearInterval(progressTimer);
     };
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle email subscription
-    console.log('Email submitted:', email);
+    console.log("Email submitted:", email);
     setShowBar(false);
   };
 
@@ -42,12 +33,9 @@ export default function ProgressBar() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
       {/* Progress Bar */}
-      {/* <div className="h-1.5 bg-gray-100">
-        <div 
-          className="h-full bg-[#22c55e] transition-all duration-300 shadow-sm"
-          style={{ width: `${progress}%` }}
-        />
-      </div> */}
+      <div className="progress-bar">
+        <div style={{ width: `${value}%` }} />
+      </div>
 
       {/* Notification with Email Subscription */}
       <div className="bg-green-500 shadow-lg ">
@@ -62,7 +50,7 @@ export default function ProgressBar() {
               </p>
             </div>
 
-            <form 
+            <form
               onSubmit={handleSubmit}
               className="flex-1 flex items-center gap-2 w-full sm:w-auto"
             >
@@ -85,7 +73,7 @@ export default function ProgressBar() {
               </button>
             </form>
 
-            <button 
+            <button
               onClick={() => setShowBar(false)}
               className="text-gray-900 hover:text-gray-600 transition-colors sm:ml-4"
             >
@@ -96,4 +84,6 @@ export default function ProgressBar() {
       </div>
     </div>
   );
-} 
+};
+
+export default ProgressBar;

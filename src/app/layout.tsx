@@ -6,13 +6,13 @@ import Navbar from "@/components/Navbar";
 import SubscribeBanner from "@/components/SubscribeBanner";
 
 const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
+  subsets: ["latin"],
+  variable: "--font-playfair",
 });
 
 const sourceSans = Source_Sans_3({
-  subsets: ['latin'],
-  variable: '--font-source-sans',
+  subsets: ["latin"],
+  variable: "--font-source-sans",
 });
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={`${playfair.variable} ${sourceSans.variable}`}>
         <SubscribeBanner />
         <NewsFlash />
-          <Navbar />
+        <Navbar />
         {children}
       </body>
     </html>

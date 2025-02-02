@@ -8,10 +8,10 @@ const nextConfig = {
       },
     ],
     domains: [
-      'picsum.photos',  // For random article images
-      'i.pravatar.cc',  // For avatar images
-      'dynamicbusiness.com', // If you're using images from this domain
-      'backend.dynamicbusiness.com'
+      "picsum.photos", // For random article images
+      "i.pravatar.cc", // For avatar images
+      "dynamicbusiness.com", // If you're using images from this domain
+      "backend.dynamicbusiness.com",
     ],
   },
   eslint: {

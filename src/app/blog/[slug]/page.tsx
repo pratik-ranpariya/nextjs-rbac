@@ -2,26 +2,61 @@ import { notFound } from "next/navigation";
 import { getAllArticles, getArticleBySlug } from "@/utils/BlogData";
 import { generateSlug } from "@/types";
 import Image from "next/image";
-import { FaClock, FaUser, FaCalendar } from 'react-icons/fa';
-import Advertisement from '@/components/Advertisement';
+import { FaClock, FaUser, FaCalendar } from "react-icons/fa";
+import Advertisement from "@/components/Advertisement";
 
-interface BlogPostPageProps {
-  params: { slug: string };
+interface Paragraph {
+  text: string;
+  image?: { src: string; alt?: string };
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+interface ArticleData {
+  title: string;
+  author: string;
+  category?: string;
+  publicationDate?: string;
+  paragraphs?: Paragraph[];
+}
+
+interface Article {
+  data: ArticleData;
+}
+
+// Import the correct types from next/types
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug);
 
-  console.log(article,"bg-white shadow-sm p-4 md:p-8bg-white shadow-sm p-4 md:p-8bg-white shadow-sm p-4 md:p-8bg-white shadow-sm p-4 md:p-8");
+  return {
+    title: article?.data.title || "Article",
+    // Add other metadata as needed
+  };
+}
+
+// Define the page props according to Next.js 14 conventions
+export default async function BlogPostPage({
+  params,
+}: {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const article: Article | null = await getArticleBySlug(params.slug);
 
   if (!article) {
     notFound();
   }
 
-  // Calculate reading time safely
   const getReadingTime = () => {
-    if (!article.data.content) return '1';
-    const words = article.data.content.split(/\s+/).length;
+    const words =
+      article?.data?.paragraphs
+        ?.map((p) => p.text)
+        .join(" ")
+        .split(/\s+/).length || 0;
     return Math.ceil(words / 200).toString();
   };
 
@@ -31,7 +66,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="relative h-[40vh] md:h-[60vh] w-full">
         <Image
           src="https://picsum.photos/1920/1080"
-          alt={article.data.title || 'Article Image'}
+          alt={article.data.title || "Article Image"}
           fill
           className="object-cover"
           priority
@@ -41,7 +76,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="max-w-4xl mx-auto">
               <div className="mb-3 md:mb-4">
                 <span className="bg-red-600 px-2 py-1 md:px-3 md:py-1 text-xs md:text-sm font-medium text-white">
-                  {article.data.category || 'BUSINESS'}
+                  {article.data.category || "BUSINESS"}
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6">
@@ -72,7 +107,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </div>
 
-      {/* After hero section */}
+      {/* After Hero Section */}
       <Advertisement type="leaderboard" className="max-w-4xl mx-auto my-8" />
 
       {/* Content Section */}
@@ -80,22 +115,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="bg-white shadow-sm p-4 md:p-8">
           {/* Article Content */}
           <div className="prose prose-lg max-w-none">
-            {/* First part of content */}
-            <Advertisement type="in-article" className="my-8" />
-            {article.data.paragraphs && article.data.paragraphs.map((paragraph, index) => (
-              <div key={index} className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {paragraph.text}
-              {paragraph?.image?.src && (
-                <div className="my-4">
-                <Image
-                  src={paragraph.image.src}
-                  alt={paragraph.image.alt}
-                  width={800}
-                  height={400}
-                  className="object-cover"
-                />
-                </div>
-              )}
+            {article.data.paragraphs?.map((paragraph, index) => (
+              <div
+                key={index}
+                className="text-gray-700 leading-relaxed whitespace-pre-wrap"
+              >
+                {paragraph.text}
+                {paragraph?.image?.src && (
+                  <div className="my-4">
+                    <Image
+                      src={paragraph.image.src}
+                      alt={paragraph.image.alt || "Article Image"}
+                      width={800}
+                      height={400}
+                      className="object-cover"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -104,14 +140,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t">
             <div className="flex items-start gap-3 md:gap-4">
               <div className="w-12 h-12 md:w-16 md:h-16 bg-red-600 flex items-center justify-center text-white text-base md:text-xl font-bold">
-                {article.data.author?.split(' ').map(n => n[0]).join('') || 'DB'}
+                {article.data.author
+                  ?.split(" ")
+                  .map((n) => n[0])
+                  .join("") || "DB"}
               </div>
               <div>
                 <h3 className="font-bold text-base md:text-lg mb-1 md:mb-2">
-                  {article.data.author || 'Dynamic Business'}
+                  {article.data.author || "Dynamic Business"}
                 </h3>
                 <p className="text-sm md:text-base text-gray-600">
-                  Contributing writer at Dynamic Business. Expertise in business strategy and digital transformation.
+                  Contributing writer at Dynamic Business. Expertise in business
+                  strategy and digital transformation.
                 </p>
               </div>
             </div>
@@ -119,7 +159,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* Related Articles */}
           <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t">
-            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Related Articles</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+              Related Articles
+            </h2>
             <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
               {[1, 2].map((_, index) => (
                 <div key={index} className="group">
@@ -156,8 +198,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
 export async function generateStaticParams() {
   const articles = await getAllArticles();
-  return articles.map((article) => ({
-    slug: generateSlug(article.data.title),
-  }));
+  return articles
+    .filter((article) => article?.data?.title)
+    .map((article) => ({
+      slug: generateSlug(article.data.title),
+    }));
 }
-

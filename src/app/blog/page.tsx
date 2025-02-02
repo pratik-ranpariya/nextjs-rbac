@@ -1,53 +1,42 @@
 "use client";
 import Link from "next/link";
 import { getAllArticles } from "@/utils/BlogData";
-import Navbar from "@/components/Navbar";
 import { ArticleData, generateSlug } from "@/types/index";
 import { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import Banner from "@/components/Banner";
-import StockTicker from "@/components/StockTicker";
 import Advertisement from "@/components/Advertisement";
-import { useSearchParams } from 'next/navigation';
-import ProgressBar from '@/components/ProgressBar';
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map(word => word[0])
-    .join('')
-    .toUpperCase();
-}
-
-function truncateText(text: string, maxLength: number) {
-  if (text.length <= maxLength) return text;
-  return text.substr(0, maxLength).trim() + '...';
-}
+import { useSearchParams } from "next/navigation";
+import ProgressBar from "@/components/ProgressBar";
 
 // Separate the content that uses useSearchParams
 function BlogContent() {
   const [articles, setArticles] = useState<ArticleData[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<ArticleData[]>([]);
   const searchParams = useSearchParams();
-  const category = searchParams.get('category');
+  const category = searchParams.get("category");
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         const fetchedArticles = await getAllArticles();
         setArticles(fetchedArticles);
-        
+
         if (category) {
-          const filtered = fetchedArticles.filter(article => 
-            article.data.title.toLowerCase().includes(category.toLowerCase()) ||
-            (article.data.content && article.data.content.toLowerCase().includes(category.toLowerCase()))
-          );
+          const filtered = fetchedArticles.filter((article) => {
+            const searchTerm = category.toLowerCase();
+            const title = String(article.data.title).toLowerCase();
+            const content = article.data.content
+              ? String(article.data.content).toLowerCase()
+              : "";
+            return title.includes(searchTerm) || content.includes(searchTerm);
+          });
           setFilteredArticles(filtered);
         } else {
           setFilteredArticles(fetchedArticles);
         }
       } catch (error) {
-        console.error('Error fetching articles:', error);
+        console.error("Error fetching articles:", error);
         setArticles([]);
         setFilteredArticles([]);
       }
@@ -68,9 +57,10 @@ function BlogContent() {
               No articles found in {category}
             </h1>
             <p className="text-gray-600 mb-8">
-              Try exploring other categories or check back later for new content.
+              Try exploring other categories or check back later for new
+              content.
             </p>
-            <Link 
+            <Link
               href="/blog"
               className="inline-block bg-red-600 text-white px-6 py-3 hover:bg-red-700 transition-colors"
             >
@@ -82,54 +72,9 @@ function BlogContent() {
     );
   }
 
-  const latestStories = [
-    {
-      time: '2 hours ago',
-      category: 'TECHNOLOGY',
-      title: 'Global Tech Giants Announce Collaborative AI Ethics Framework',
-      link: '#'
-    },
-    {
-      time: '4 hours ago',
-      category: 'MARKETS',
-      title: 'European Markets Show Strong Recovery Signs After Recent Downturn',
-      link: '#'
-    },
-    {
-      time: '6 hours ago',
-      category: 'POLICY',
-      title: 'New Climate Policy Impact on Business Sectors: What You Need to Know',
-      link: '#'
-    },
-    {
-      time: '8 hours ago',
-      category: 'STARTUPS',
-      title: 'Startup Funding Reaches Q1 Peak: Record Investment in AI Companies',
-      link: '#'
-    },
-    {
-      time: '12 hours ago',
-      category: 'CLIMATE',
-      title: 'Renewable Energy Investment Trends: Solar Takes the Lead',
-      link: '#'
-    },
-    {
-      time: '1 day ago',
-      category: 'TECHNOLOGY',
-      title: 'The Rise of Quantum Computing in Financial Markets',
-      link: '#'
-    },
-    {
-      time: '1 day ago',
-      category: 'BUSINESS',
-      title: 'Global Supply Chain Innovations: AI-Driven Solutions',
-      link: '#'
-    }
-  ];
-
   return (
     <main>
-      <ProgressBar />
+      <ProgressBar value={0} />
       <div className="min-h-screen bg-gray-50">
         {/* Only show Banner when not viewing a category */}
         {!category && <Banner />}
@@ -156,7 +101,9 @@ function BlogContent() {
                         The Future of AI in Business: Transforming Industries
                       </h2>
                       <p className="text-gray-200 mb-4 line-clamp-2">
-                        An in-depth look at how artificial intelligence is revolutionizing business operations and decision-making across sectors.
+                        An in-depth look at how artificial intelligence is
+                        revolutionizing business operations and decision-making
+                        across sectors.
                       </p>
                       <div className="flex items-center text-sm">
                         <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center font-medium mr-2">
@@ -178,24 +125,23 @@ function BlogContent() {
                   <div className="flex-1 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-red-600 scrollbar-track-gray-100">
                     <div className="space-y-4">
                       {articles.map((article, index) => (
-                        <Link 
-                        key={index}
-                        href={`/blog/${generateSlug(article.data.title)}`}
+                        <Link
+                          key={index}
+                          href={`/blog/${generateSlug(article.data.title)}`}
                           className="flex items-start group pb-4 border-b border-gray-100 last:border-0"
                         >
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-xs font-medium text-red-600">
                                 {/* {story.category} */}
-                                {(article.data.author)}
-
+                                {article.data.author}
                               </span>
                               <span className="text-xs text-gray-500">
-                              {article.data.publicationDate}
+                                {article.data.publicationDate}
                               </span>
                             </div>
                             <h3 className="font-semibold group-hover:text-red-600 transition-colors line-clamp-2">
-                            {article.data.title}
+                              {article.data.title}
                             </h3>
                           </div>
                         </Link>
@@ -206,7 +152,7 @@ function BlogContent() {
               </div>
             </div>
           </div>
-        </section>}
+        </section>
         {/* Category Header */}
         {category && (
           <div className="bg-white border-b">
@@ -226,7 +172,7 @@ function BlogContent() {
           <div className="relative overflow-hidden bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
               <h2 className="text-2xl font-bold mb-8">
-                {category ? `Featured in ${category}` : 'Featured Articles'}
+                {category ? `Featured in ${category}` : "Featured Articles"}
               </h2>
               <div className="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide">
                 {featuredArticles.map((article, index) => (
@@ -243,7 +189,7 @@ function BlogContent() {
                           <div className="absolute bottom-4 left-4 right-4 text-white">
                             <div className="mb-2">
                               <span className="bg-red-600/85 px-2 py-1 text-xs font-medium">
-                                {category || 'FEATURED'}
+                                {category || "FEATURED"}
                               </span>
                             </div>
                             <h3 className="text-lg font-bold group-hover:text-red-400 transition-colors">
@@ -260,12 +206,15 @@ function BlogContent() {
           </div>
         )}
 
-        <Advertisement type="leaderboard" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" />
+        <Advertisement
+          type="leaderboard"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        />
 
         {/* Articles Grid */}
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold mb-8">
-            {category ? `More ${category} Articles` : 'Latest Articles'}
+            {category ? `More ${category} Articles` : "Latest Articles"}
           </h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredArticles.map((article, index) => (
@@ -277,10 +226,10 @@ function BlogContent() {
                 <div className="relative">
                   <div className="absolute top-4 left-4 z-10">
                     <span className="bg-red-600/85 text-white px-3 py-1 text-sm font-medium">
-                      {category || 'Featured'}
+                      {category || "Featured"}
                     </span>
                   </div>
-                  
+
                   <div className="relative h-64 overflow-hidden">
                     <Image
                       src={`https://picsum.photos/800/400?random=${index}`}
@@ -298,11 +247,14 @@ function BlogContent() {
                   <p className="text-gray-600 mb-4 line-clamp-2">
                     {article.data.content}
                   </p>
-                  
+
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <div className="flex items-center space-x-2">
                       <div className="w-8 h-8 bg-red-600 text-white flex items-center justify-center font-medium">
-                        {article.data.author?.split(' ').map(n => n[0]).join('') || 'DB'}
+                        {article.data.author
+                          ?.split(" ")
+                          .map((n) => n[0])
+                          .join("") || "DB"}
                       </div>
                       <span>{article.data.author}</span>
                     </div>
@@ -316,7 +268,10 @@ function BlogContent() {
           </div>
         </div>
 
-        <Advertisement type="banner" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" />
+        <Advertisement
+          type="banner"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        />
       </div>
     </main>
   );
@@ -326,7 +281,7 @@ function BlogContent() {
 export default function BlogPage() {
   return (
     <main>
-      <ProgressBar />
+      <ProgressBar value={0} />
       <div className="min-h-screen bg-gray-50">
         <Suspense fallback={<div>Loading...</div>}>
           <BlogContent />

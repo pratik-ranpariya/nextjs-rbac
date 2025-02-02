@@ -1,26 +1,27 @@
-'use client';
-import { useState } from 'react';
-import LoginPopup from './LoginPopup';
+"use client";
+import { useState } from "react";
+import LoginPopup from "./LoginPopup";
+// import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthButtons() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const { isAuthenticated } = useAuth();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
 
-  if (isAuthenticated) return null;
+  // if (isAuthenticated) return null;
 
   return (
     <>
       <div className="bg-red-600 px-4 py-2">
         <div className="flex items-center space-x-4">
-          <button 
+          <button
             onClick={() => setIsLoginOpen(true)}
             className="text-sm text-white hover:text-white/90 transition-colors"
           >
             Login
           </button>
           <span className="text-white/50">|</span>
-          <button 
+          <button
             onClick={() => setIsSignupOpen(true)}
             className="text-sm text-white hover:text-white/90 transition-colors"
           >
@@ -29,17 +30,17 @@ export default function AuthButtons() {
         </div>
       </div>
 
-      <LoginPopup 
+      <LoginPopup
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         mode="login"
       />
 
-      <LoginPopup 
+      <LoginPopup
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
         mode="signup"
       />
     </>
   );
-} 
+}

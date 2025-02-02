@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface BlogPost {
   id: number;
   title: string;
@@ -12,6 +14,8 @@ export interface ArticleData {
   url: string;
   scrapedAt: string;
   data: {
+    content: ReactNode;
+    category: string;
     title: string;
     publicationDate: string;
     author: string;
