@@ -1,40 +1,50 @@
-'use client';
+"use client";
 import { useState } from "react";
 import Image from "next/image";
-import { FaImage, FaVideo, FaLink, FaTimes, FaBold, FaItalic, FaListUl, FaQuoteRight, FaHeading } from "react-icons/fa";
+import {
+  FaImage,
+  FaVideo,
+  FaLink,
+  FaTimes,
+  FaBold,
+  FaItalic,
+  FaListUl,
+  FaQuoteRight,
+  FaHeading,
+} from "react-icons/fa";
 
 export default function WritePage() {
   const [formData, setFormData] = useState({
-    title: '',
-    subtitle: '',
-    content: '',
-    category: 'business',
+    title: "",
+    subtitle: "",
+    content: "",
+    category: "business",
     coverImage: null as string | null,
-    tags: [] as string[]
+    tags: [] as string[],
   });
 
-  const [currentTag, setCurrentTag] = useState('');
+  const [currentTag, setCurrentTag] = useState("");
 
   const handleAddTag = () => {
     if (currentTag && !formData.tags.includes(currentTag)) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, currentTag]
+        tags: [...prev.tags, currentTag],
       }));
-      setCurrentTag('');
+      setCurrentTag("");
     }
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
   };
 
   return (
@@ -45,7 +55,9 @@ export default function WritePage() {
           <h2 className="text-lg font-semibold mb-3">Writing Tips</h2>
           <ul className="text-sm text-gray-600 space-y-2">
             <li>• Start with a compelling headline that grabs attention</li>
-            <li>• Include relevant images to break up text and engage readers</li>
+            <li>
+              • Include relevant images to break up text and engage readers
+            </li>
             <li>• Keep paragraphs short and focused</li>
             <li>• Use subheadings to organize your content</li>
           </ul>
@@ -63,7 +75,9 @@ export default function WritePage() {
                   className="object-cover"
                 />
                 <button
-                  onClick={() => setFormData(prev => ({ ...prev, coverImage: null }))}
+                  onClick={() =>
+                    setFormData((prev) => ({ ...prev, coverImage: null }))
+                  }
                   className="absolute top-4 right-4 p-2 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <FaTimes />
@@ -73,7 +87,9 @@ export default function WritePage() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <label className="cursor-pointer flex flex-col items-center">
                   <FaImage className="w-12 h-12 text-gray-400" />
-                  <span className="mt-2 text-sm text-gray-500">Add Cover Image</span>
+                  <span className="mt-2 text-sm text-gray-500">
+                    Add Cover Image
+                  </span>
                   <input
                     type="file"
                     className="hidden"
@@ -82,7 +98,7 @@ export default function WritePage() {
                       const file = e.target.files?.[0];
                       if (file) {
                         const url = URL.createObjectURL(file);
-                        setFormData(prev => ({ ...prev, coverImage: url }));
+                        setFormData((prev) => ({ ...prev, coverImage: url }));
                       }
                     }}
                   />
@@ -96,14 +112,22 @@ export default function WritePage() {
             <div className="space-y-6">
               {/* Category Selection */}
               <div className="flex gap-4">
-                {['business', 'technology', 'finance', 'marketing', 'startups'].map((cat) => (
+                {[
+                  "business",
+                  "technology",
+                  "finance",
+                  "marketing",
+                  "startups",
+                ].map((cat) => (
                   <button
                     key={cat}
-                    onClick={() => setFormData(prev => ({ ...prev, category: cat }))}
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, category: cat }))
+                    }
                     className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                       formData.category === cat
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? "bg-red-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
                     {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -116,7 +140,9 @@ export default function WritePage() {
                 type="text"
                 placeholder="Title"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
+                }
                 className="w-full text-4xl font-bold focus:outline-none placeholder-gray-300"
               />
 
@@ -125,17 +151,27 @@ export default function WritePage() {
                 type="text"
                 placeholder="Subtitle (optional)"
                 value={formData.subtitle}
-                onChange={(e) => setFormData(prev => ({ ...prev, subtitle: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, subtitle: e.target.value }))
+                }
                 className="w-full text-xl text-gray-600 focus:outline-none placeholder-gray-300"
               />
 
               {/* Writing Stats */}
               <div className="flex items-center gap-6 text-sm text-gray-500">
-                <span>Words: {formData.content.split(/\s+/).filter(Boolean).length}</span>
+                <span>
+                  Words: {formData.content.split(/\s+/).filter(Boolean).length}
+                </span>
                 <span>•</span>
                 <span>Characters: {formData.content.length}</span>
                 <span>•</span>
-                <span>Reading time: {Math.ceil(formData.content.split(/\s+/).filter(Boolean).length / 200)} min</span>
+                <span>
+                  Reading time:{" "}
+                  {Math.ceil(
+                    formData.content.split(/\s+/).filter(Boolean).length / 200
+                  )}{" "}
+                  min
+                </span>
               </div>
 
               {/* Tags Input */}
@@ -159,7 +195,7 @@ export default function WritePage() {
                   placeholder="Add a tag"
                   value={currentTag}
                   onChange={(e) => setCurrentTag(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                  onKeyPress={(e) => e.key === "Enter" && handleAddTag()}
                   className="text-sm focus:outline-none placeholder-gray-400"
                 />
               </div>
@@ -168,34 +204,58 @@ export default function WritePage() {
               <div className="border rounded-lg p-2">
                 <div className="flex gap-4 items-center">
                   <div className="flex gap-2">
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Bold">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Bold"
+                    >
                       <FaBold className="w-4 h-4 text-gray-600" />
                     </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Italic">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Italic"
+                    >
                       <FaItalic className="w-4 h-4 text-gray-600" />
                     </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Heading">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Heading"
+                    >
                       <FaHeading className="w-4 h-4 text-gray-600" />
                     </button>
                   </div>
                   <div className="w-px h-6 bg-gray-200" />
                   <div className="flex gap-2">
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Bullet List">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Bullet List"
+                    >
                       <FaListUl className="w-4 h-4 text-gray-600" />
                     </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Quote">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Quote"
+                    >
                       <FaQuoteRight className="w-4 h-4 text-gray-600" />
                     </button>
                   </div>
                   <div className="w-px h-6 bg-gray-200" />
                   <div className="flex gap-2">
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Add Image">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Add Image"
+                    >
                       <FaImage className="w-4 h-4 text-gray-600" />
                     </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Add Video">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Add Video"
+                    >
                       <FaVideo className="w-4 h-4 text-gray-600" />
                     </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Add Link">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Add Link"
+                    >
                       <FaLink className="w-4 h-4 text-gray-600" />
                     </button>
                   </div>
@@ -206,7 +266,9 @@ export default function WritePage() {
               <textarea
                 placeholder="Start your story with an engaging introduction..."
                 value={formData.content}
-                onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, content: e.target.value }))
+                }
                 className="w-full min-h-[400px] focus:outline-none placeholder-gray-300 resize-none text-gray-700 leading-relaxed"
               />
 
@@ -221,9 +283,7 @@ export default function WritePage() {
                   </button>
                 </div>
                 <div className="flex items-center gap-4">
-                  <button
-                    className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors text-sm"
-                  >
+                  <button className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors text-sm">
                     Schedule
                   </button>
                   <button
@@ -239,17 +299,23 @@ export default function WritePage() {
 
           {/* SEO Preview */}
           <div className="border-t bg-gray-50 p-8">
-            <h3 className="text-sm font-semibold text-gray-900 mb-4">SEO Preview</h3>
+            <h3 className="text-sm font-semibold text-gray-900 mb-4">
+              SEO Preview
+            </h3>
             <div className="space-y-4">
               <div>
                 <h4 className="text-xl text-blue-600 hover:underline cursor-pointer line-clamp-1">
-                  {formData.title || 'Your Article Title Will Appear Here'}
+                  {formData.title || "Your Article Title Will Appear Here"}
                 </h4>
                 <div className="text-sm text-green-700">
-                  yourdomain.com/blog/{formData.title ? formData.title.toLowerCase().replace(/\s+/g, '-') : 'article-url'}
+                  yourdomain.com/blog/
+                  {formData.title
+                    ? formData.title.toLowerCase().replace(/\s+/g, "-")
+                    : "article-url"}
                 </div>
                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                  {formData.content || 'Your article preview will appear here. Make sure to write a compelling introduction to attract readers.'}
+                  {formData.content ||
+                    "Your article preview will appear here. Make sure to write a compelling introduction to attract readers."}
                 </p>
               </div>
             </div>
@@ -258,4 +324,4 @@ export default function WritePage() {
       </div>
     </main>
   );
-} 
+}

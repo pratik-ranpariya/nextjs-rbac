@@ -39,7 +39,7 @@ const ArticlePage = () => {
           throw new Error("Failed to fetch articles");
         }
 
-        console.log("data", data?.data?.data);
+        // console.log("data", data?.data?.data);
 
         const articles = data?.data?.data?.map((item: ArticleData) => ({
           id: item.id,

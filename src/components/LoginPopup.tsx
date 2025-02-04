@@ -1,8 +1,9 @@
 "use client";
-import axios from "axios";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import axios from "axios";
 
 interface LoginPopupProps {
   isOpen: boolean;
@@ -36,32 +37,67 @@ export default function LoginPopup({ isOpen, onClose, mode }: LoginPopupProps) {
 
     try {
       if (mode === "login") {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/local`,
-          {
-            identifier: formData.email,
-            password: formData.password,
-          }
-        );
-        localStorage.setItem("jwt", response.data.jwt);
-        router.push("/dashboard");
-        onClose();
+        const result = await signIn("credentials", {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
+
+        if (result?.error) {
+          setError(result.error);
+          return;
+        }
+
+        if (result?.ok) {
+          router.push("/dashboard");
+          router.refresh();
+          onClose();
+        }
       } else {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/local/register`,
-          {
-            username: formData.username,
+        // For signup, using axios
+        try {
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/local/register`,
+            {
+              username: formData.username,
+              email: formData.email,
+              password: formData.password,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          // After successful registration, sign in automatically
+          const result = await signIn("credentials", {
             email: formData.email,
             password: formData.password,
+            redirect: false,
+          });
+
+          if (result?.ok) {
+            router.push("/dashboard");
+            router.refresh();
+            onClose();
           }
-        );
-        localStorage.setItem("jwt", response.data.jwt);
-        router.push("/dashboard");
-        onClose();
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            setError(
+              error.response?.data?.error?.message || "Registration failed"
+            );
+          } else {
+            setError("An unexpected error occurred");
+          }
+        }
       }
     } catch (err) {
-      const error = err as ErrorResponse;
-      setError(error.error || "Something went wrong");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error?.message || "Authentication failed");
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 

@@ -4,6 +4,8 @@ import "./globals.css";
 import NewsFlash from "@/components/NewsFlash";
 import Navbar from "@/components/Navbar";
 import SubscribeBanner from "@/components/SubscribeBanner";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { SessionTimeout } from "@/components/SessionTimeout";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -28,10 +30,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${playfair.variable} ${sourceSans.variable}`}>
-        <SubscribeBanner />
-        <NewsFlash />
-        <Navbar />
-        {children}
+        <AuthProvider>
+          <SessionTimeout />
+          <SubscribeBanner />
+          <NewsFlash />
+          <Navbar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

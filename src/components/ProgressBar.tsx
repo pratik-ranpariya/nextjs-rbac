@@ -24,7 +24,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ value }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle email subscription
-    console.log("Email submitted:", email);
+    // console.log("Email submitted:", email);
     setShowBar(false);
   };
 

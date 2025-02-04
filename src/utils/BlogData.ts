@@ -24,11 +24,6 @@ export async function getArticleBySlug(
 ): Promise<ArticleData | null> {
   "use server";
   const articles = await getAllArticles();
-  console.log(
-    "Available slugs:",
-    articles.map((article) => generateSlug(article.data.title))
-  );
-  console.log("Requested slug:", slug);
 
   const article = articles.find(
     (article) => generateSlug(article.data.title) === slug
