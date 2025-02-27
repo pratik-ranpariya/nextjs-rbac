@@ -8,6 +8,9 @@ import Banner from "@/components/Banner";
 import Advertisement from "@/components/Advertisement";
 import { useSearchParams } from "next/navigation";
 import ProgressBar from "@/components/ProgressBar";
+import { ApiResponse, GetWithToken } from "@/common/axios/api";
+import { API_GET } from "@/common/constant/api";
+import { AllArticlesType } from "@/common/types";
 
 // Separate the content that uses useSearchParams
 function BlogContent() {
@@ -15,6 +18,7 @@ function BlogContent() {
   const [filteredArticles, setFilteredArticles] = useState<ArticleData[]>([]);
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
+  const [allArticles, setAllArticles] = useState<AllArticlesType[]>([])
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -43,7 +47,20 @@ function BlogContent() {
     };
 
     fetchArticles();
+    Topholderlist();
   }, [category]);
+
+  const Topholderlist = async () => {
+    try {
+      const response = (await GetWithToken(API_GET.ALL_ARTICLES)) as ApiResponse<any>;
+      if(response?.status == 200){
+        setAllArticles(response.data)
+      }
+    } catch (error) {
+    } finally {
+      // setTopHolderLoading(false);
+    }
+  };
 
   const featuredArticles = filteredArticles.slice(0, 5);
 
@@ -217,23 +234,23 @@ function BlogContent() {
             {category ? `More ${category} Articles` : "Latest Articles"}
           </h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {filteredArticles.map((article, index) => (
+            {allArticles.filter((_i) => _i?.submissionStatus === "approved").map((article, index) => (
               <Link
                 key={index}
-                href={`/blog/${generateSlug(article.data.title)}`}
+                href={`/blog/${generateSlug(article?.title)}?id=${article?.id}`}
                 className="group bg-white hover:bg-red-50/50 hover:shadow-xl transition-all duration-300"
               >
                 <div className="relative">
                   <div className="absolute top-4 left-4 z-10">
                     <span className="bg-red-600/85 text-white px-3 py-1 text-sm font-medium">
-                      {category || "Featured"}
+                      {article?.category?.name || "Latest"}
                     </span>
                   </div>
 
                   <div className="relative h-64 overflow-hidden">
                     <Image
                       src={`https://picsum.photos/800/400?random=${index}`}
-                      alt={article.data.title}
+                      alt={article?.slug}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -242,24 +259,26 @@ function BlogContent() {
 
                 <div className="p-6">
                   <h2 className="text-xl font-bold mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
-                    {article.data.title}
+                    {article.title}
                   </h2>
-                  <p className="text-gray-600 mb-4 line-clamp-2">
-                    {article.data.content}
-                  </p>
+                  <p className="text-gray-600 mb-4 line-clamp-2" dangerouslySetInnerHTML={{ __html: article?.description }} />
 
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <div className="flex items-center space-x-2">
                       <div className="w-8 h-8 bg-red-600 text-white flex items-center justify-center font-medium">
-                        {article.data.author
+                        {article?.author?.name
                           ?.split(" ")
                           .map((n) => n[0])
                           .join("") || "DB"}
                       </div>
-                      <span>{article.data.author}</span>
+                      <span>{article?.author?.name}</span>
                     </div>
                     <time className="text-gray-500">
-                      {article.data.publicationDate}
+                        {new Date(article?.publishedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        })}
                     </time>
                   </div>
                 </div>
