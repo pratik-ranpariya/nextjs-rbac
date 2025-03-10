@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { FaChevronDown } from 'react-icons/fa';
+import { ApiResponse, GetWithToken } from '@/common/axios/api';
+import { API_GET } from '@/common/constant/api';
 
 const categories = [
   {
@@ -35,10 +37,31 @@ const categories = [
     description: 'Startup news and resources'
   }
 ];
+interface CategoryType {
+    id: number,
+    documentId: string,
+    name: string,
+    slug: string,
+    description: string,
+    createdAt: Date,
+    updatedAt: Date,
+    publishedAt: Date,
+    locale: string | null
+}
 
 export default function CategoryDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const CategoryList = async () => {
+    try {
+      const response = (await GetWithToken(API_GET.CATEGORIES)) as ApiResponse<any>;
+      if(response?.status == 200){
+        setCategories(response.data)
+      }
+    } catch (error) {
+    } finally { }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,7 +69,7 @@ export default function CategoryDropdown() {
         setIsOpen(false);
       }
     }
-
+    CategoryList();
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -74,10 +97,10 @@ export default function CategoryDropdown() {
             <div className="border-t my-1"></div>
             {categories.map((category) => (
               <Link
+              onClick={() => setIsOpen(false)}
                 key={category.slug}
                 href={`/blog?category=${category.slug}`}
                 className="block px-4 py-2 hover:bg-red-50"
-                onClick={() => setIsOpen(false)}
               >
                 <div className="text-sm font-medium text-gray-900 hover:text-red-600">
                   {category.name}

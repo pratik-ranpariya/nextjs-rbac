@@ -315,7 +315,7 @@ export default function BlogPostPage() {
                         Contributing writer at Dynamic Business. Expertise in business strategy and digital transformation.
                       </p>
                       <Link 
-                        href={`/author/${article.author.id}`}
+                        href={`/author/${article?.author?.id}`}
                         className="inline-flex items-center text-red-600 hover:text-red-700 font-medium"
                       >
                         View all posts
@@ -374,8 +374,8 @@ export default function BlogPostPage() {
                             <div className="flex-shrink-0">
                               {comment.avatar ? (
                                 <Image
-                                  src={comment.avatar}
-                                  alt={comment.author}
+                                  src={comment?.avatar}
+                                  alt={comment?.author}
                                   width={48}
                                   height={48}
                                   className="rounded-full"
@@ -388,16 +388,16 @@ export default function BlogPostPage() {
                             </div>
                             <div className="flex-grow">
                               <div className="flex items-center gap-2 mb-1">
-                                <h4 className="font-semibold">{comment.author}</h4>
+                                <h4 className="font-semibold">{comment?.author}</h4>
                                 <span className="text-sm text-gray-500">
-                                  {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                                  {new Date(comment?.createdAt).toLocaleDateString('en-US', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'
                                   })}
                                 </span>
                               </div>
-                              <p className="text-gray-700">{comment.content}</p>
+                              <p className="text-gray-700">{comment?.content}</p>
                             </div>
                           </div>
                         ))
